@@ -1,27 +1,23 @@
-use clap::{Parser, Subcommand};
+mod parser;
+mod structs;
 
-#[derive(Parser)]
-#[command(version, about, long_about = None)]
-struct Cli {
-    #[command(subcommand)]
-    command: Option<Command>,
-}
+use {
+    parser::{Cli, Command},
+    structs::Task,
+};
 
-#[derive(Subcommand)]
-enum Command {
-    Add { value: String },
-    Update { index: usize, new_value: String },
-    Delete { index: usize },
-    MarkInProgress { index: usize },
-    MarkDone { index: usize },
-    List { status: Option<String> },
-}
+use {clap::Parser, std::collections::HashMap};
 
 fn main() {
     let cli = Cli::parse();
 
-    match &cli.command {
-        Some(Command::Add { value }) => {}
+    let mut tasks = HashMap::new();
+
+    match cli.command {
+        Some(Command::Add { description }) => {
+            let new_task = Task::new(description);
+            tasks.insert(new_task.id, new_task);
+        }
         Some(Command::Update { index, new_value }) => {}
         Some(Command::Delete { index }) => {}
         Some(Command::MarkInProgress { index }) => {}
